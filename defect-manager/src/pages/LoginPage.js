@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import authService from '../services/authService'
 
 export default function LoginPage() {
@@ -41,6 +41,9 @@ export default function LoginPage() {
             >
                 Войти
             </button>
+            <p>
+                Нет аккаунта? <Link to="/register" className="text-blue-500">Регистрация</Link>
+            </p>
         </div>
     )
 }
