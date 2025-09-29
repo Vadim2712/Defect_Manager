@@ -1,11 +1,13 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import LoginPage from './pages/LoginPage'
-import RegisterPage from './pages/RegisterPage'
-import DashboardPage from './pages/DashboardPage'
-import ProjectsPage from './pages/ProjectsPage'
-import DefectsPage from './pages/DefectsPage'
-import DefectDetailsPage from './pages/DefectDetailsPage'
-import PrivateRoute from './components/PrivateRoute'
+import LoginPage from './pages/LoginPage.jsx'
+import RegisterPage from './pages/RegisterPage.jsx'
+import DashboardPage from './pages/DashboardPage.jsx'
+import ProjectsPage from './pages/ProjectsPage.jsx'
+import DefectsPage from './pages/DefectsPage.jsx'
+import DefectDetailsPage from './pages/DefectDetailsPage.jsx'
+import ReportsPage from './pages/ReportsPage.jsx'
+import PrivateRoute from './components/PrivateRoute.jsx'
+
 
 export default function App() {
   return (
