@@ -1,14 +1,14 @@
-import storageService from './storageService.js'
-
+import storageService from './storageService'
 const USERS_KEY = 'users'
 const CURRENT_KEY = 'currentUser'
-
 const authService = {
     register(user) {
         const users = storageService.get(USERS_KEY) || []
-        users.push(user)
+        if (users.find(u => u.email === user.email)) return null
+        const newUser = { id: Date.now(), ...user }
+        users.push(newUser)
         storageService.set(USERS_KEY, users)
-        return user
+        return newUser
     },
     login(email, password) {
         const users = storageService.get(USERS_KEY) || []
@@ -26,5 +26,4 @@ const authService = {
         return storageService.get(CURRENT_KEY)
     }
 }
-
 export default authService
