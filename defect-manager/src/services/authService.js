@@ -1,4 +1,4 @@
-import storageService from './storageService'
+import storageService from './storageService.js'
 
 const USERS_KEY = 'users'
 const CURRENT_KEY = 'currentUser'
