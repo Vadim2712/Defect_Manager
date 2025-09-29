@@ -17,6 +17,7 @@ export default function App() {
         <Route path="/projects" element={<PrivateRoute><ProjectsPage /></PrivateRoute>} />
         <Route path="/defects" element={<PrivateRoute><DefectsPage /></PrivateRoute>} />
         <Route path="/defects/:id" element={<PrivateRoute><DefectDetailsPage /></PrivateRoute>} />
+        <Route path="/reports" element={<PrivateRoute><ReportsPage /></PrivateRoute>} />
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </Router>

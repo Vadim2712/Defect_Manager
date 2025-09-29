@@ -15,6 +15,7 @@ export default function DashboardPage() {
             <nav className="space-x-4">
                 <Link to="/projects" className="text-blue-500">Проекты</Link>
                 <Link to="/defects" className="text-blue-500">Дефекты</Link>
+                <Link to="/reports" className="text-blue-500">Аналитика</Link>
             </nav>
             <button onClick={handleLogout} className="mt-4 bg-red-500 text-white px-4 py-2 rounded">Выйти</button>
         </div>
