@@ -39,9 +39,11 @@ function getCurrentUser() {
     return storageService.get(CURRENT_USER_KEY)
 }
 
-export default {
+const authService = {
     register,
     login,
     logout,
     getCurrentUser,
 }
+
+export default authService
