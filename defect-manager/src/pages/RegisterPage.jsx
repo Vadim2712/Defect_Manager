@@ -55,7 +55,7 @@ export default function RegisterPage() {
                         >
                             <option value="engineer">Инженер</option>
                             <option value="manager">Менеджер</option>
-                            <option value="tester">Тестировщик</option>
+                            <option value="director">Руководитель</option>
                         </select>
                     </div>
                     <button
