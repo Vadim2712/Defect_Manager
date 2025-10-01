@@ -2,27 +2,33 @@ import storageService from './storageService'
 
 const PROJECTS_KEY = 'projects'
 
-const projectService = {
-    getAll() {
-        return storageService.get(PROJECTS_KEY) || []
-    },
-    add(project) {
-        const projects = this.getAll()
-        const newProject = { id: Date.now(), ...project }
-        projects.push(newProject)
-        storageService.set(PROJECTS_KEY, projects)
-        return newProject
-    },
-    update(id, data) {
-        let projects = this.getAll()
-        projects = projects.map(p => (p.id === id ? { ...p, ...data } : p))
-        storageService.set(PROJECTS_KEY, projects)
-    },
-    remove(id) {
-        let projects = this.getAll()
-        projects = projects.filter(p => p.id !== id)
-        storageService.set(PROJECTS_KEY, projects)
-    }
+function getAll() {
+    return storageService.get(PROJECTS_KEY) || []
 }
 
-export default projectService
+function saveAll(projects) {
+    storageService.set(PROJECTS_KEY, projects)
+}
+
+function create({ name, description, deadline }) {
+    const projects = getAll()
+    const newProject = {
+        id: Date.now(),
+        name,
+        description,
+        deadline,
+    }
+    projects.push(newProject)
+    saveAll(projects)
+    return newProject
+}
+
+function getById(id) {
+    return getAll().find(p => p.id === id)
+}
+
+export default {
+    getAll,
+    create,
+    getById,
+}
