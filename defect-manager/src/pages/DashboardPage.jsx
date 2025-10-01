@@ -1,29 +1,34 @@
-import { Link } from 'react-router-dom'
-import Layout from '../components/Layout'
+import { useNavigate } from 'react-router-dom'
 import authService from '../services/authService'
+import Layout from '../components/Layout'
 
 export default function DashboardPage() {
     const user = authService.getCurrentUser()
+    const navigate = useNavigate()
+
+    const handleLogout = () => {
+        authService.logout()
+        navigate('/login')
+    }
 
     return (
         <Layout>
-            <div className="space-y-6">
-                <h2 className="text-2xl font-bold">Добро пожаловать, {user?.email}</h2>
-                <p className="text-gray-600">Вы вошли как: <span className="font-semibold">{user?.role}</span></p>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <Link to="/projects" className="block bg-white shadow-lg rounded-xl p-6 hover:shadow-xl transition">
-                        <h3 className="text-lg font-bold mb-2">Проекты</h3>
-                        <p className="text-gray-600">Управление проектами и объектами</p>
-                    </Link>
-                    <Link to="/defects" className="block bg-white shadow-lg rounded-xl p-6 hover:shadow-xl transition">
-                        <h3 className="text-lg font-bold mb-2">Дефекты</h3>
-                        <p className="text-gray-600">Создание и контроль дефектов</p>
-                    </Link>
-                    <Link to="/reports" className="block bg-white shadow-lg rounded-xl p-6 hover:shadow-xl transition">
-                        <h3 className="text-lg font-bold mb-2">Аналитика</h3>
-                        <p className="text-gray-600">Статистика и отчёты по дефектам</p>
-                    </Link>
-                </div>
+            <div className="bg-white p-6 rounded-xl shadow max-w-lg mx-auto space-y-4">
+                <h2 className="text-2xl font-bold">Личный кабинет</h2>
+                {user ? (
+                    <>
+                        <p><span className="font-semibold">Email:</span> {user.email}</p>
+                        <p><span className="font-semibold">Роль:</span> {user.role}</p>
+                        <button
+                            onClick={handleLogout}
+                            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                        >
+                            Выйти
+                        </button>
+                    </>
+                ) : (
+                    <p>Пользователь не найден</p>
+                )}
             </div>
         </Layout>
     )
