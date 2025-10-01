@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Layout from '../components/Layout'
 import projectService from '../services/projectService'
 import authService from '../services/authService'
+import { Link } from 'react-router-dom'
 
 export default function ProjectsPage() {
     const [projects, setProjects] = useState([])
@@ -67,6 +68,12 @@ export default function ProjectsPage() {
                             <h3 className="text-lg font-bold">{p.name}</h3>
                             <p className="text-gray-700">{p.description}</p>
                             <p className="text-sm text-gray-500">Дедлайн: {p.deadline}</p>
+                            <Link
+                                to={`/projects/${p.id}`}
+                                className="inline-block mt-2 text-blue-600 hover:underline"
+                            >
+                                Открыть проект
+                            </Link>
                         </div>
                     ))}
                 </div>

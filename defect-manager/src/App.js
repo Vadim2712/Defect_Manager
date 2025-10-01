@@ -11,6 +11,7 @@ import EngineerPage from './pages/EngineerPage.jsx'
 import ManagerPage from './pages/ManagerPage.jsx'
 import LeaderPage from './pages/LeaderPage.jsx'
 import authService from './services/authService.js'
+import ProjectDetailsPage from './pages/ProjectDetailsPage.jsx'
 
 function RoleRoute({ role, children }) {
   const user = authService.getCurrentUser()
@@ -39,6 +40,9 @@ export default function App() {
         } />
         <Route path="/reports" element={
           <PrivateRoute><ReportsPage /></PrivateRoute>
+        } />
+        <Route path="/projects/:id" element={
+          <PrivateRoute><ProjectDetailsPage /></PrivateRoute>
         } />
 
         {/* Ролевые страницы */}
