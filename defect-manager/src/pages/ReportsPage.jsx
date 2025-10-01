@@ -1,33 +1,44 @@
 import { useEffect, useState } from 'react'
+import Layout from '../components/Layout'
 import defectService from '../services/defectService'
 import { STATUSES } from '../utils/constants'
+import authService from '../services/authService'
 
 export default function ReportsPage() {
-    const [defects, setDefects] = useState([])
     const [stats, setStats] = useState({})
+    const user = authService.getCurrentUser()
 
     useEffect(() => {
-        const list = defectService.getAll()
-        setDefects(list)
+        const defects = defectService.getAll()
         const grouped = {}
         for (const s of STATUSES) grouped[s.value] = 0
-        for (const d of list) {
+        for (const d of defects) {
             if (grouped[d.status] !== undefined) grouped[d.status]++
         }
         setStats(grouped)
     }, [])
 
+    if (user?.role !== 'менеджер' && user?.role !== 'руководитель') {
+        return (
+            <Layout>
+                <p className="text-red-600">У вас нет доступа к отчётам</p>
+            </Layout>
+        )
+    }
+
     return (
-        <div className="p-6 space-y-4">
-            <h1 className="text-2xl font-bold">Аналитика</h1>
-            <div className="space-y-2">
-                {STATUSES.map(s => (
-                    <div key={s.value} className="flex justify-between border p-2 rounded">
-                        <span>{s.label}</span>
-                        <span>{stats[s.value]}</span>
-                    </div>
-                ))}
+        <Layout>
+            <div className="space-y-6">
+                <h2 className="text-2xl font-bold">Аналитика</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {STATUSES.map(s => (
+                        <div key={s.value} className="bg-white shadow-md rounded-xl p-6 flex justify-between items-center">
+                            <span className="font-semibold">{s.label}</span>
+                            <span className="text-lg font-bold">{stats[s.value] ?? 0}</span>
+                        </div>
+                    ))}
+                </div>
             </div>
-        </div>
+        </Layout>
     )
 }
