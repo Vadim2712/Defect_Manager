@@ -5,14 +5,11 @@ const DEFECTS_KEY = 'defects'
 function getAll() {
     return storageService.get(DEFECTS_KEY) || []
 }
+function saveAll(list) { storageService.set(DEFECTS_KEY, list) }
 
-function saveAll(defects) {
-    storageService.set(DEFECTS_KEY, defects)
-}
-
-function create({ projectId, title, description, status = 'open', assigneeId = null, deadline = null }) {
-    const defects = getAll()
-    const newDefect = {
+function create({ projectId = null, title = '', description = '', status = 'new', assigneeId = null, deadline = null }) {
+    const list = getAll()
+    const item = {
         id: Date.now(),
         projectId,
         title,
@@ -21,33 +18,28 @@ function create({ projectId, title, description, status = 'open', assigneeId = n
         assigneeId,
         deadline,
         comments: [],
+        history: []
     }
-    defects.push(newDefect)
-    saveAll(defects)
-    return newDefect
+    list.push(item)
+    saveAll(list)
+    return item
 }
 
 function getById(id) {
-    return getAll().find(d => d.id === id)
+    return getAll().find(d => Number(d.id) === Number(id)) || null
 }
-
 function getByProject(projectId) {
-    return getAll().filter(d => d.projectId === projectId)
+    return getAll().filter(d => Number(d.projectId) === Number(projectId))
 }
-
 function update(id, updates) {
-    const defects = getAll()
-    const index = defects.findIndex(d => d.id === id)
-    if (index === -1) return null
-    defects[index] = { ...defects[index], ...updates }
-    saveAll(defects)
-    return defects[index]
+    const list = getAll()
+    const idx = list.findIndex(d => Number(d.id) === Number(id))
+    if (idx === -1) return null
+    list[idx] = { ...list[idx], ...updates }
+    saveAll(list)
+    return list[idx]
 }
 
 export default {
-    getAll,
-    create,
-    getById,
-    getByProject,
-    update,
+    getAll, create, getById, getByProject, update
 }

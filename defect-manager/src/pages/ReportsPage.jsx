@@ -1,44 +1,40 @@
 import { useEffect, useState } from 'react'
-import Layout from '../components/Layout'
+import authService from '../services/authService'
 import defectService from '../services/defectService'
 import { STATUSES } from '../utils/constants'
-import authService from '../services/authService'
 
 export default function ReportsPage() {
-    const [stats, setStats] = useState({})
     const user = authService.getCurrentUser()
+    const [stats, setStats] = useState({})
 
     useEffect(() => {
-        const defects = defectService.getAll()
+        const list = defectService.getAll()
         const grouped = {}
-        for (const s of STATUSES) grouped[s.value] = 0
-        for (const d of defects) {
-            if (grouped[d.status] !== undefined) grouped[d.status]++
-        }
+        STATUSES.forEach(s => grouped[s.value] = 0)
+        list.forEach(d => { if (grouped[d.status] !== undefined) grouped[d.status]++ })
         setStats(grouped)
     }, [])
 
-    if (user?.role !== 'менеджер' && user?.role !== 'руководитель') {
-        return (
-            <Layout>
-                <p className="text-red-600">У вас нет доступа к отчётам</p>
-            </Layout>
-        )
+    if (!user || (user.role !== 'менеджер' && user.role !== 'руководитель')) {
+        return <div className="text-red-400">У вас нет доступа к аналитике</div>
     }
 
     return (
-        <Layout>
-            <div className="space-y-6">
-                <h2 className="text-2xl font-bold">Аналитика</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {STATUSES.map(s => (
-                        <div key={s.value} className="bg-white shadow-md rounded-xl p-6 flex justify-between items-center">
-                            <span className="font-semibold">{s.label}</span>
-                            <span className="text-lg font-bold">{stats[s.value] ?? 0}</span>
+        <div className="space-y-6">
+            <h1 className="text-2xl font-bold text-brand-accent">Аналитика</h1>
+            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+                {STATUSES.map(s => (
+                    <div key={s.value} className="card">
+                        <div className="flex justify-between items-center">
+                            <div>
+                                <div className="text-sm text-gray-300">{s.label}</div>
+                                <div className="text-2xl font-bold mt-2">{stats[s.value] ?? 0}</div>
+                            </div>
+                            <div className="text-brand-accent text-xl">●</div>
                         </div>
-                    ))}
-                </div>
+                    </div>
+                ))}
             </div>
-        </Layout>
+        </div>
     )
 }

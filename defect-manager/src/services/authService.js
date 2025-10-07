@@ -1,49 +1,63 @@
 import storageService from './storageService'
 
 const USERS_KEY = 'users'
-const CURRENT_USER_KEY = 'currentUser'
+const CURRENT_KEY = 'currentUser'
 
-function getAll() {
+function getAllUsers() {
     return storageService.get(USERS_KEY) || []
 }
 
-function saveAll(users) {
+function saveUsers(users) {
     storageService.set(USERS_KEY, users)
 }
 
-function register(user) {
-    const users = getAll()
-    if (users.find(u => u.email === user.email)) {
-        throw new Error('User already exists')
+function register(email, password, role) {
+    const users = getAllUsers()
+
+    // Проверяем, нет ли пользователя с таким email
+    const exists = users.find(u => u.email.toLowerCase() === email.toLowerCase())
+    if (exists) throw new Error('Пользователь уже существует')
+
+    const newUser = {
+        id: Date.now(),
+        email,
+        password,
+        role
     }
-    const newUser = { ...user, id: Date.now() }
+
     users.push(newUser)
-    saveAll(users)
+    saveUsers(users)
+    return newUser
 }
 
 function login(email, password) {
-    const users = getAll()
-    const user = users.find(u => u.email === email && u.password === password)
-    if (!user) {
-        throw new Error('Invalid credentials')
-    }
-    storageService.set(CURRENT_USER_KEY, user)
+    const users = getAllUsers()
+    const user = users.find(
+        u => u.email.toLowerCase() === email.toLowerCase() && u.password === password
+    )
+    if (!user) throw new Error('Неверный логин или пароль')
+
+    storageService.set(CURRENT_KEY, user)
     return user
 }
 
 function logout() {
-    storageService.remove(CURRENT_USER_KEY)
+    localStorage.removeItem(CURRENT_KEY)
 }
 
 function getCurrentUser() {
-    return storageService.get(CURRENT_USER_KEY)
+    return storageService.get(CURRENT_KEY)
 }
 
-const authService = {
+function clearAllUsers() {
+    localStorage.removeItem(USERS_KEY)
+    localStorage.removeItem(CURRENT_KEY)
+}
+
+export default {
     register,
     login,
     logout,
     getCurrentUser,
+    clearAllUsers
 }
-
-export default authService

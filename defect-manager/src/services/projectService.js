@@ -6,29 +6,29 @@ function getAll() {
     return storageService.get(PROJECTS_KEY) || []
 }
 
-function saveAll(projects) {
-    storageService.set(PROJECTS_KEY, projects)
+function saveAll(items) {
+    storageService.set(PROJECTS_KEY, items)
 }
 
-function create({ name, description, deadline }) {
-    const projects = getAll()
-    const newProject = {
+function create({ title, description, deadline }) {
+    const list = getAll()
+    const newItem = {
         id: Date.now(),
-        name,
-        description,
-        deadline,
+        title: title || 'Без названия',
+        description: description || '',
+        deadline: deadline || null
     }
-    projects.push(newProject)
-    saveAll(projects)
-    return newProject
+    list.push(newItem)
+    saveAll(list)
+    return newItem
 }
 
 function getById(id) {
-    return getAll().find(p => p.id === id)
+    return getAll().find(p => Number(p.id) === Number(id)) || null
 }
 
 export default {
     getAll,
     create,
-    getById,
+    getById
 }

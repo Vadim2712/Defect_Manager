@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react'
-import Layout from '../components/Layout'
+import { Link } from 'react-router-dom'
 import projectService from '../services/projectService'
 import authService from '../services/authService'
-import { Link } from 'react-router-dom'
 
 export default function ProjectsPage() {
+    const user = authService.getCurrentUser()
     const [projects, setProjects] = useState([])
-    const [name, setName] = useState('')
+
+    const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
     const [deadline, setDeadline] = useState('')
-    const user = authService.getCurrentUser()
 
     useEffect(() => {
         setProjects(projectService.getAll())
@@ -17,67 +17,38 @@ export default function ProjectsPage() {
 
     const handleAdd = (e) => {
         e.preventDefault()
-        const newProject = projectService.create({ name, description, deadline })
-        setProjects([...projects, newProject])
-        setName('')
-        setDescription('')
-        setDeadline('')
+        if (!title || !description || !deadline) return
+        const newP = projectService.create({ title, description, deadline })
+        setProjects(prev => [...prev, newP])
+        setTitle(''); setDescription(''); setDeadline('')
     }
 
     return (
-        <Layout>
-            <div className="space-y-6">
-                <h2 className="text-2xl font-bold">Проекты</h2>
+        <div className="space-y-6">
+            <h1 className="text-2xl font-bold text-brand-accent">Проекты</h1>
 
-                {user?.role === 'менеджер' && (
-                    <form onSubmit={handleAdd} className="space-y-3 bg-white p-4 rounded-xl shadow">
-                        <input
-                            type="text"
-                            placeholder="Название проекта"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className="w-full border p-2 rounded"
-                            required
-                        />
-                        <textarea
-                            placeholder="Описание"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            className="w-full border p-2 rounded"
-                            required
-                        />
-                        <input
-                            type="date"
-                            value={deadline}
-                            onChange={(e) => setDeadline(e.target.value)}
-                            className="w-full border p-2 rounded"
-                            required
-                        />
-                        <button
-                            type="submit"
-                            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                        >
-                            Добавить проект
-                        </button>
-                    </form>
-                )}
+            {user?.role === 'менеджер' && (
+                <form onSubmit={handleAdd} className="card space-y-3">
+                    <input className="input" placeholder="Название проекта" value={title} onChange={e => setTitle(e.target.value)} required />
+                    <textarea className="input h-28" placeholder="Описание" value={description} onChange={e => setDescription(e.target.value)} required />
+                    <input className="input" type="date" value={deadline} onChange={e => setDeadline(e.target.value)} required />
+                    <div className="flex">
+                        <button className="btn btn-primary">Добавить проект</button>
+                    </div>
+                </form>
+            )}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {projects.map(p => (
-                        <div key={p.id} className="bg-white p-4 rounded-xl shadow">
-                            <h3 className="text-lg font-bold">{p.name}</h3>
-                            <p className="text-gray-700">{p.description}</p>
-                            <p className="text-sm text-gray-500">Дедлайн: {p.deadline}</p>
-                            <Link
-                                to={`/projects/${p.id}`}
-                                className="inline-block mt-2 text-blue-600 hover:underline"
-                            >
-                                Открыть проект
-                            </Link>
-                        </div>
-                    ))}
-                </div>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {projects.length === 0 && <div className="text-gray-400 italic">Проектов пока нет</div>}
+                {projects.map(p => (
+                    <div key={p.id} className="card">
+                        <h3 className="text-lg font-semibold text-brand-accent mb-2">{p.title}</h3>
+                        <p className="text-gray-300 mb-3">{p.description}</p>
+                        <p className="text-xs text-gray-400 mb-4">Дедлайн: {p.deadline || '—'}</p>
+                        <Link to={`/projects/${p.id}`} className="text-sm nav-pill-accent inline-block">Открыть проект</Link>
+                    </div>
+                ))}
             </div>
-        </Layout>
+        </div>
     )
 }
