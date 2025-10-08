@@ -1,18 +1,27 @@
+import authService from '../services/authService'
 import projectService from '../services/projectService'
 import defectService from '../services/defectService'
-import storageService from '../services/storageService'
 
-beforeEach(() => storageService.clear())
+describe('интеграция сервисов', () => {
+    beforeEach(() => {
+        localStorage.clear()
+    })
 
-test('defect links to project', () => {
-    const project = projectService.add({ name: 'House' })
-    const defect = defectService.add({ title: 'Crack', projectId: project.id })
-    expect(defect.projectId).toBe(project.id)
-})
+    test('менеджер создаёт проект, инженер добавляет дефект', () => {
+        const manager = authService.register({ username: 'mgr', password: '123', role: 'менеджер' })
+        const project = projectService.create({ title: 'Core System', description: 'Main logic' })
 
-test('defect assigned to user', () => {
-    storageService.set('users', [{ id: 1, email: 'e@test.com', password: '123', role: 'engineer' }])
-    const defect = defectService.add({ title: 'Leak' })
-    const updated = defectService.assign(defect.id, 1, null)
-    expect(updated.assigneeId).toBe(1)
+        const engineer = authService.register({ username: 'eng', password: '456', role: 'инженер' })
+        authService.login('eng', '456')
+
+        const defect = defectService.create({
+            title: 'UI issue',
+            description: 'Button not clickable',
+            projectId: project.id,
+            status: 'new'
+        })
+
+        expect(defect.projectId).toBe(project.id)
+        expect(defectService.getAll().length).toBe(1)
+    })
 })

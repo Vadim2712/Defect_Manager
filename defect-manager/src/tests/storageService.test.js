@@ -1,11 +1,17 @@
 import storageService from '../services/storageService'
 
-test('set and get item', () => {
-    storageService.set('x', { a: 1 })
-    expect(storageService.get('x')).toEqual({ a: 1 })
-})
-test('remove item', () => {
-    storageService.set('y', 123)
-    storageService.remove('y')
-    expect(storageService.get('y')).toBeNull()
+describe('storageService', () => {
+    beforeEach(() => {
+        localStorage.clear()
+    })
+
+    test('сохраняет и получает данные', () => {
+        storageService.save('projects', [{ id: 1, title: 'Test' }])
+        const result = storageService.get('projects')
+        expect(result).toEqual([{ id: 1, title: 'Test' }])
+    })
+
+    test('возвращает пустой массив если ключ отсутствует', () => {
+        expect(storageService.get('unknown')).toEqual([])
+    })
 })

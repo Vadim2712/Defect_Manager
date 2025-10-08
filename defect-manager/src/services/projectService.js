@@ -3,32 +3,24 @@ import storageService from './storageService'
 const PROJECTS_KEY = 'projects'
 
 function getAll() {
-    return storageService.get(PROJECTS_KEY) || []
+    return storageService.get(PROJECTS_KEY)
 }
 
-function saveAll(items) {
-    storageService.set(PROJECTS_KEY, items)
-}
-
-function create({ title, description, deadline }) {
-    const list = getAll()
-    const newItem = {
+function create({ title, description }) {
+    const projects = getAll()
+    const newProject = {
         id: Date.now(),
-        title: title || 'Без названия',
-        description: description || '',
-        deadline: deadline || null
+        title,
+        description
     }
-    list.push(newItem)
-    saveAll(list)
-    return newItem
+    projects.push(newProject)
+    storageService.save(PROJECTS_KEY, projects)
+    return newProject
 }
 
-function getById(id) {
-    return getAll().find(p => Number(p.id) === Number(id)) || null
+function remove(id) {
+    const projects = getAll().filter(p => p.id !== id)
+    storageService.save(PROJECTS_KEY, projects)
 }
 
-export default {
-    getAll,
-    create,
-    getById
-}
+export default { getAll, create, remove }
